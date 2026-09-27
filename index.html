@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aurèle — Maison de Parfum</title>
+    <meta name="description" content="Aurèle is a Parisian maison de parfum composing rare, hand-finished fragrances." />
+    <meta name="theme-color" content="#0b0907" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0907'/%3E%3Ctext x='32' y='45' text-anchor='middle' font-family='Georgia,serif' font-size='38' fill='%23c9a46a'%3EA%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  </head>
+  <body class="is-loading">
+    <!-- Preloader -->
+    <div class="curtain" aria-hidden="true"></div>
+    <div class="preloader" aria-hidden="true">
+      <div class="preloader__center">
+        <svg class="preloader__bottle" viewBox="0 0 200 320">
+          <defs>
+            <clipPath id="pre-clip"><path d="M47 94H153Q175 94 175 116V282Q175 304 153 304H47Q25 304 25 282V116Q25 94 47 94Z" /></clipPath>
+            <linearGradient id="pre-liquid" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#f2c77e" /><stop offset="1" stop-color="#8a5a22" />
+            </linearGradient>
+          </defs>
+          <rect class="preloader__liquid" clip-path="url(#pre-clip)" x="20" y="304" width="160" height="210" fill="url(#pre-liquid)" />
+          <path class="preloader__stroke" d="M47 94H153Q175 94 175 116V282Q175 304 153 304H47Q25 304 25 282V116Q25 94 47 94Z" />
+          <path class="preloader__stroke" d="M80 94V80H120V94" />
+          <path class="preloader__stroke" d="M70 80V12H130V80Z" />
+        </svg>
+        <p class="preloader__brand">AURÈLE</p>
+        <p class="preloader__tag">Maison de Parfum · Paris</p>
+      </div>
+      <div class="preloader__count"><span>000</span></div>
+      <p class="preloader__note">Composing the experience</p>
+    </div>
+
+    <div class="cursor" aria-hidden="true">
+      <div class="cursor__ring"><span class="cursor__label"></span></div>
+      <div class="cursor__dot"></div>
+    </div>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="progress" aria-hidden="true"></div>
+    <canvas id="webgl" aria-hidden="true"></canvas>
+
+    <!-- Navigation -->
+    <header class="nav">
+      <a href="#top" class="nav__logo" data-cursor="Top">AURÈLE<sup>Paris</sup></a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#collection">Collection</a>
+        <a href="#notes">The Notes</a>
+        <a href="#maison">Maison</a>
+        <a href="#portfolio">Portfolio</a>
+      </nav>
+      <div class="nav__actions">
+        <button class="nav__bag magnetic" data-open-bag data-cursor="Bag">Bag <span class="nav__count" data-bag-count>0</span></button>
+        <button class="nav__burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+      </div>
+    </header>
+
+    <div class="menu" aria-hidden="true">
+      <nav class="menu__links">
+        <a href="#collection"><small>01</small><span>Collection</span></a>
+        <a href="#notes"><small>02</small><span>The Notes</span></a>
+        <a href="#maison"><small>03</small><span>Maison</span></a>
+        <a href="#portfolio"><small>04</small><span>Portfolio</span></a>
+      </nav>
+      <p class="menu__foot">229 Rue Saint-Honoré, Paris · Open daily 10–19h</p>
+    </div>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero" id="top">
+        <div class="hero__inner">
+          <span class="eyebrow hero__eyebrow" data-scramble>Maison de Parfum — Paris, est. 1924</span>
+          <h1 class="hero__title">
+            <span class="hero__mask"><span class="hero__line">Scent is</span></span>
+            <span class="hero__mask"><span class="hero__line"><em>memory,</em></span></span>
+            <span class="hero__mask"><span class="hero__line">made visible.</span></span>
+          </h1>
+          <p class="hero__lead">Rare compositions, macerated for four hundred hours and finished by hand in our atelier on the Rue Saint-Honoré.</p>
+          <div class="hero__ctas">
+            <a href="#collection" class="btn btn--gold magnetic" data-cursor="Shop"><span class="btn__label" data-text="Shop the collection">Shop the collection</span></a>
+            <a href="#notes" class="btn btn--ghost magnetic"><span class="btn__label" data-text="Explore the notes">Explore the notes</span></a>
+          </div>
+        </div>
+        <div class="hero__badge" aria-hidden="true">
+          <svg viewBox="0 0 200 200">
+            <defs><path id="circ" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" /></defs>
+            <text><textPath href="#circ">Eau de Parfum · Nuit d’Ambre · No. 01 · Paris · </textPath></text>
+          </svg>
+          <span>✦</span>
+        </div>
+        <div class="hero__bottom">
+          <div class="hero__meta"><span>No. 01</span><strong>Nuit d’Ambre</strong><span>Saffron · Oud · Vanilla</span></div>
+          <div class="hero__scroll"><span>Scroll</span><i></i></div>
+          <div class="hero__meta hero__meta--r"><span>Edition</span><strong>MMXXVI</strong><span>Limited to 1,924 flacons</span></div>
+        </div>
+      </section>
+
+      <!-- Marquee -->
+      <section class="marquee" aria-hidden="true">
+        <div class="marquee__row" data-dir="1">
+          <div class="marquee__track">
+            <span>Amber</span><i>✦</i><span><em>Oud</em></span><i>✦</i><span>Damask Rose</span><i>✦</i><span><em>Iris</em></span><i>✦</i><span>Vetiver</span><i>✦</i><span><em>Neroli</em></span><i>✦</i>
+          </div>
+        </div>
+        <div class="marquee__row marquee__row--outline" data-dir="-1">
+          <div class="marquee__track">
+            <span>Hand-finished in Paris</span><i>✦</i><span>Since 1924</span><i>✦</i><span>Four hundred hours</span><i>✦</i><span>Rare essences</span><i>✦</i>
+          </div>
+        </div>
+      </section>
+
+      <!-- Manifesto -->
+      <section class="manifesto">
+        <span class="eyebrow">Our manifesto</span>
+        <p class="manifesto__text">
+          We do not make perfume to be noticed. We make it to be <em>remembered</em> — a trace of saffron on a scarf, the ghost of rose in an empty room, the warmth of amber long after you have <em>gone.</em>
+        </p>
+        <div class="manifesto__sign">
+          <span class="manifesto__sig">Hélène Aurèle</span>
+          <small>Fourth-generation perfumer</small>
+        </div>
+      </section>
+
+      <!-- Collection (horizontal) -->
+      <section class="collection" id="collection">
+        <div class="collection__track">
+          <div class="collection__intro">
+            <span class="eyebrow">The Collection</span>
+            <h2 class="h2">Six <em>compositions,</em><br />one signature.</h2>
+            <p>Each fragrance is an extrait-strength eau de parfum, poured by hand into a flacon of Normandy crystal.</p>
+            <div class="collection__hint"><i></i>Keep scrolling</div>
+          </div>
+          <!-- product cards injected -->
+          <div class="collection__outro">
+            <span class="eyebrow">Bespoke</span>
+            <h3>Commission a scent<br /><em>that is yours alone.</em></h3>
+            <a href="#contact" class="btn btn--ghost magnetic"><span class="btn__label" data-text="Book a consultation">Book a consultation</span></a>
+          </div>
+        </div>
+        <div class="collection__bar"><span></span></div>
+      </section>
+
+      <!-- Notes (pinned, 3D bottle centre stage) -->
+      <section class="notes" id="notes">
+        <div class="notes__glow"></div>
+        <div class="notes__head">
+          <span class="eyebrow">Anatomy of No. 01</span>
+          <div class="notes__counter"><span class="notes__roll"><span class="notes__roll-in"><b>01</b><b>02</b><b>03</b></span></span>/ 03</div>
+        </div>
+
+        <div class="notes__phase" data-color="#d9861a">
+          <div class="notes__left">
+            <span class="notes__kicker">Top notes · the first fifteen minutes</span>
+            <h3 class="notes__title">The <em>first</em><br />breath</h3>
+          </div>
+          <div class="notes__right">
+            <ul class="notes__list">
+              <li><span>Kashmiri Saffron</span><small>Pampore, India</small></li>
+              <li><span>Pink Pepper</span><small>Réunion</small></li>
+              <li><span>Calabrian Bergamot</span><small>Reggio, Italy</small></li>
+            </ul>
+            <p class="notes__desc">Bright, spiced and luminous — an opening that catches the light like the first sip of champagne.</p>
+          </div>
+        </div>
+
+        <div class="notes__phase" data-color="#9e1f17">
+          <div class="notes__left">
+            <span class="notes__kicker">Heart notes · the next four hours</span>
+            <h3 class="notes__title">A <em>velvet</em><br />heart</h3>
+          </div>
+          <div class="notes__right">
+            <ul class="notes__list">
+              <li><span>Damask Rose Absolute</span><small>Kazanlak, Bulgaria</small></li>
+              <li><span>Labdanum</span><small>Andalusia, Spain</small></li>
+              <li><span>Orris Butter</span><small>Tuscany, Italy</small></li>
+            </ul>
+            <p class="notes__desc">The composition unfurls — resinous, floral and deeply warm, like a room lit only by candles.</p>
+          </div>
+        </div>
+
+        <div class="notes__phase" data-color="#3a1106">
+          <div class="notes__left">
+            <span class="notes__kicker">Base notes · until morning</span>
+            <h3 class="notes__title">What <em>remains</em></h3>
+          </div>
+          <div class="notes__right">
+            <ul class="notes__list">
+              <li><span>Aged Oud</span><small>Assam, India</small></li>
+              <li><span>Bourbon Vanilla</span><small>Madagascar</small></li>
+              <li><span>Grey Ambergris</span><small>Atlantic coast</small></li>
+            </ul>
+            <p class="notes__desc">A slow, smoky sillage that settles into skin — the part of you that stays in the room.</p>
+          </div>
+        </div>
+
+        <div class="notes__bar"><span></span></div>
+      </section>
+
+      <!-- Maison / craft -->
+      <section class="craft" id="maison">
+        <div class="craft__head">
+          <span class="eyebrow">The Maison</span>
+          <h2 class="h2" data-split>Composed by hand,<br /><em>aged in silence.</em></h2>
+        </div>
+
+        <div class="craft__reveal">
+          <div class="craft__media">
+            <div class="silk"><span></span><span></span><span></span></div>
+            <div class="craft__media-text">
+              <span>400</span>
+              <p>hours of maceration<br />in French oak</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="craft__stats">
+          <div class="stat"><strong data-count="100">0</strong><span>Years of savoir-faire</span></div>
+          <div class="stat"><strong data-count="37">0</strong><span>Rare essences in No. 01</span></div>
+          <div class="stat"><strong data-count="12">0</strong><span>Master artisans</span></div>
+          <div class="stat"><strong data-count="1924">0</strong><span>Numbered flacons</span></div>
+        </div>
+
+        <ol class="craft__steps">
+          <li><small>01</small><h4>Harvest</h4><p>Jasmine from Grasse, picked before dawn while the petals still hold the night.</p></li>
+          <li><small>02</small><h4>Distil</h4><p>Copper alembics, low heat and patience — extraction that can take a full week.</p></li>
+          <li><small>03</small><h4>Compose</h4><p>Up to three hundred trials before a formula is signed by the house perfumer.</p></li>
+          <li><small>04</small><h4>Finish</h4><p>Each flacon filled, polished and numbered by hand on the Rue Saint-Honoré.</p></li>
+        </ol>
+      </section>
+
+      <!-- Portfolio -->
+      <section class="portfolio" id="portfolio">
+        <div class="portfolio__head">
+          <span class="eyebrow">Portfolio</span>
+          <h2 class="h2" data-split>Selected <em>work</em></h2>
+          <p>Campaigns, installations and objects created by the Maison and its collaborators.</p>
+        </div>
+        <div class="featured"></div>
+        <ul class="work"></ul>
+        <div class="preview" aria-hidden="true"><div class="preview__track"></div></div>
+      </section>
+
+      <!-- Press -->
+      <section class="press">
+        <span class="eyebrow">Praise</span>
+        <div class="press__quotes">
+          <blockquote class="press__quote is-active">
+            <p>“Less a perfume than a <em>place</em> — you step into it, and you do not want to leave.”</p>
+            <cite>The Scent Review</cite>
+          </blockquote>
+          <blockquote class="press__quote">
+            <p>“Aurèle has made restraint feel like the most <em>opulent</em> thing in the world.”</p>
+            <cite>Maison Journal</cite>
+          </blockquote>
+          <blockquote class="press__quote">
+            <p>“Nuit d’Ambre wears like cashmere and lingers like a <em>secret.</em>”</p>
+            <cite>Notes &amp; Nose Quarterly</cite>
+          </blockquote>
+        </div>
+        <div class="press__dots"><button class="is-active" aria-label="Quote 1"></button><button aria-label="Quote 2"></button><button aria-label="Quote 3"></button></div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta" id="contact">
+        <div class="cta__inner">
+          <span class="eyebrow">Le Cercle</span>
+          <h2 class="h2" data-split>Receive the first<br /><em>drop</em> of every<br />composition.</h2>
+          <form class="cta__form">
+            <input type="email" required placeholder="Your email address" aria-label="Email address" />
+            <button type="submit" class="btn btn--gold magnetic"><span class="btn__label" data-text="Join">Join</span></button>
+          </form>
+          <p class="cta__small">Private previews, atelier invitations, no noise.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__top">
+        <div class="footer__col"><h5>Visit</h5><p>229 Rue Saint-Honoré<br />75001 Paris</p></div>
+        <div class="footer__col"><h5>Maison</h5><a href="#collection">Collection</a><a href="#notes">The Notes</a><a href="#portfolio">Portfolio</a></div>
+        <div class="footer__col"><h5>Follow</h5><a href="#">Instagram</a><a href="#">Pinterest</a><a href="#">Journal</a></div>
+        <div class="footer__col"><h5>Care</h5><a href="#">Shipping</a><a href="#">Returns</a><a href="#">Contact</a></div>
+      </div>
+      <div class="footer__brand" aria-hidden="true">AURÈLE</div>
+      <div class="footer__bottom"><span>© 2026 Aurèle Maison de Parfum</span><a href="#top" data-cursor="Top">Back to top ↑</a></div>
+    </footer>
+
+    <!-- Bag drawer -->
+    <aside class="bag" aria-label="Shopping bag">
+      <div class="bag__overlay" data-close-bag></div>
+      <div class="bag__panel" data-lenis-prevent>
+        <div class="bag__head"><h3>Your bag <sup data-bag-count>0</sup></h3><button data-close-bag class="bag__close" aria-label="Close bag">Close</button></div>
+        <p class="bag__empty">Your bag is empty — for now.</p>
+        <ul class="bag__list"></ul>
+        <div class="bag__foot">
+          <div class="bag__sub"><span>Subtotal</span><strong data-subtotal>€0</strong></div>
+          <p>Complimentary shipping & samples with every order.</p>
+          <button class="btn btn--gold bag__checkout"><span class="btn__label" data-text="Checkout">Checkout</span></button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Quick view -->
+    <div class="qv" aria-hidden="true">
+      <div class="qv__overlay" data-close-qv></div>
+      <div class="qv__panel" data-lenis-prevent>
+        <button class="qv__close" data-close-qv aria-label="Close">Close ✕</button>
+        <div class="qv__visual"></div>
+        <div class="qv__info"></div>
+      </div>
+    </div>
+
+    <div class="toast" role="status" aria-live="polite"></div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
