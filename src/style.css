@@ -496,3 +496,51 @@ main { position: relative; z-index: 2; }
 @media (prefers-reduced-motion: reduce) {
   .grain, .silk span, .bottle__wave, .art::after, .hero__scroll i::after { animation: none; }
 }
+
+/* ---------- Studio packshots (rendered from the 3D flacon) ---------- */
+.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.card__shot { position: absolute; inset: -4% -10%; overflow: hidden; }
+.card__shot .shot { transition: transform 1.2s var(--ease-out), filter 0.8s; }
+.card:hover .card__shot .shot { transform: scale(1.06); filter: brightness(1.08); }
+.card__visual::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent 28%); pointer-events: none; }
+.card__glow { display: none; }
+.art .shot { transform: scale(1.02); }
+.art::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(0, 0, 0, 0.45), transparent 45%); }
+.art__word { z-index: 2; }
+.art__ring { display: none; }
+.qv__visual::before { display: none; }
+.qv__visual .shot { position: absolute; }
+.bag__thumb { position: relative; overflow: hidden; }
+
+/* ---------- Alchemy ---------- */
+.alchemy { position: relative; height: 100vh; height: 100svh; overflow: hidden; }
+.alchemy::before { content: ''; position: absolute; left: 50%; top: 52%; width: 90vmin; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, rgba(201, 138, 58, 0.16), transparent 62%); pointer-events: none; }
+.alchemy__head { position: absolute; top: 110px; left: var(--pad); z-index: 2; }
+.alchemy__title { margin-top: 18px; font-family: var(--serif); font-weight: 300; font-size: clamp(40px, 4.6vw, 80px); line-height: 0.95; letter-spacing: -0.02em; }
+.alchemy__title em { color: var(--gold-2); }
+.alchemy__steps { position: absolute; left: var(--pad); bottom: 60px; width: min(360px, 30vw); height: 150px; z-index: 2; }
+.astep { position: absolute; inset: auto 0 0; }
+.astep small { font-family: var(--serif); font-style: italic; color: var(--gold); font-size: 20px; }
+.astep h3 { font-family: var(--serif); font-weight: 400; font-size: 34px; line-height: 1.1; margin: 4px 0 8px; }
+.astep p { font-size: 14px; color: var(--muted); }
+.alchemy__meter { position: absolute; right: var(--pad); bottom: 60px; z-index: 2; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); }
+.alchemy__meter strong { font-family: var(--serif); font-weight: 300; font-size: clamp(64px, 7vw, 110px); line-height: 0.9; letter-spacing: 0; color: var(--gold-2); font-variant-numeric: lining-nums tabular-nums; }
+.alchemy__meter b { font-weight: 300; }
+.alchemy__meter i { width: 180px; height: 1px; background: var(--line); position: relative; }
+.alchemy__meter em { position: absolute; inset: 0; background: var(--gold); transform-origin: right; transform: scaleX(0); }
+.flabels { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.flabel { position: absolute; top: 0; left: 0; display: flex; flex-direction: column; font-family: var(--serif); font-style: italic; font-size: 22px; white-space: nowrap; opacity: 0; will-change: transform, opacity; }
+.flabel::before { content: ''; width: 34px; height: 1px; background: var(--gold); margin-bottom: 8px; }
+.flabel small { font-family: var(--sans); font-style: normal; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+@media (max-width: 767px) {
+  .alchemy__head { top: 84px; }
+  .alchemy__title { font-size: 36px; }
+  .alchemy__steps { width: auto; right: var(--pad); bottom: 36px; height: 120px; }
+  .astep h3 { font-size: 26px; }
+  .astep p { font-size: 13px; }
+  .alchemy__meter { top: 96px; bottom: auto; }
+  .alchemy__meter strong { font-size: 48px; }
+  .alchemy__meter i, .alchemy__meter small { display: none; }
+  .flabel { font-size: 15px; }
+  .flabel small { display: none; }
+}

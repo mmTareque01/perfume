@@ -10,6 +10,8 @@ import Lenis from 'lenis';
 import { products, projects } from './data.js';
 import { bottleSVG } from './bottle.js';
 import { createScene } from './scene.js';
+import { renderShots } from './studio.js';
+import { FULL } from './flacon.js';
 import { createCart, fmt, priceOf } from './cart.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, ScrambleTextPlugin, DrawSVGPlugin, CustomEase);
@@ -27,6 +29,17 @@ window.scrollTo(0, 0);
 --------------------------------------------------------------------------- */
 const byId = Object.fromEntries(products.map((p) => [p.id, p]));
 
+// Studio packshots rendered from the real 3D flacon (filled in before the intro)
+const shots = {};
+const shotImg = (id, alt = '') => (shots[id] ? `<img class="shot" src="${shots[id]}" alt="${alt}" />` : bottleSVG(byId[id]));
+function applyShots() {
+  document.querySelectorAll('[data-shot]').forEach((el) => {
+    const id = el.dataset.shot;
+    if (shots[id]) el.src = shots[id];
+    else el.outerHTML = bottleSVG(byId[id]);
+  });
+}
+
 document.querySelector('.collection__outro').insertAdjacentHTML(
   'beforebegin',
   products
@@ -34,10 +47,9 @@ document.querySelector('.collection__outro').insertAdjacentHTML(
       (p) => `
   <article class="card" style="--c1:${p.c1};--c2:${p.c2}">
     <button class="card__visual" data-quickview="${p.id}" data-cursor="View" aria-label="View ${p.name}">
-      <span class="card__glow"></span>
+      <span class="card__shot"><img class="shot" data-shot="${p.id}" alt="${p.name} in the Aurèle flacon" /></span>
       <span class="card__no">No. ${p.no}</span>
       <span class="card__family">${p.family}</span>
-      <span class="card__bottle">${bottleSVG(p)}</span>
     </button>
     <div class="card__info">
       <div><h3 class="card__name">${p.name}</h3><p class="card__notes">${p.notes.join(' · ')}</p></div>
@@ -50,8 +62,7 @@ document.querySelector('.collection__outro').insertAdjacentHTML(
 
 const artHTML = (p, i) => `
   <div class="art art--${p.variant}" style="--a:${p.c1};--b:${p.c2}">
-    <span class="art__ring"></span>
-    ${bottleSVG({ c1: p.c1, c2: p.c2, name: 'No. 0' + ((i % 6) + 1), level: 0.55 + (i % 3) * 0.1 })}
+    <img class="shot" data-shot="${products[(i + 1) % products.length].id}" alt="" />
     <span class="art__word">${p.title}</span>
   </div>`;
 
@@ -151,7 +162,7 @@ if (finePointer) {
 /* ---------------------------------------------------------------------------
    Cart + fly-to-bag + quick view
 --------------------------------------------------------------------------- */
-const cart = createCart({ products, lenis, toast });
+const cart = createCart({ products, lenis, toast, thumb: (p) => shotImg(p.id) });
 const bagBtn = document.querySelector('.nav__bag');
 
 function flyToBag(from) {
@@ -194,7 +205,7 @@ function openQuickView(p) {
   lenis?.stop();
   qvEl.style.setProperty('--c1', p.c1);
   qvEl.style.setProperty('--c2', p.c2);
-  qvEl.querySelector('.qv__visual').innerHTML = bottleSVG(p);
+  qvEl.querySelector('.qv__visual').innerHTML = shotImg(p.id, `${p.name} flacon`);
   const size50 = priceOf(p, 50);
   qvEl.querySelector('.qv__info').innerHTML = `
     <span class="eyebrow">No. ${p.no} · ${p.family}</span>
@@ -230,7 +241,7 @@ function openQuickView(p) {
   gsap.timeline()
     .to(qvEl.querySelector('.qv__overlay'), { opacity: 1, duration: 0.5 })
     .fromTo(qvPanel, { clipPath: 'inset(50% 0% 50% 0% round 22px)' }, { clipPath: 'inset(0% 0% 0% 0% round 22px)', duration: 1.1, ease: 'lux' }, 0)
-    .fromTo(qvEl.querySelector('.qv__visual .bottle'), { yPercent: 40, rotate: -12, opacity: 0 }, { yPercent: 0, rotate: 0, opacity: 1, duration: 1.4, ease: 'silk' }, 0.35)
+    .fromTo(qvEl.querySelector('.qv__visual > *'), { scale: 1.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.6, ease: 'silk' }, 0.3)
     .fromTo(qvEl.querySelectorAll('.qv__info > *'), { y: 40, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.07, duration: 0.9, ease: 'silk' }, 0.4);
 }
 function closeQuickView() {
@@ -328,6 +339,11 @@ gsap.ticker.add((t, dt) => {
    Preloader → intro
 --------------------------------------------------------------------------- */
 const fontsReady = Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 3000))]);
+const shotsReady = fontsReady
+  .then(() => { scene.drawLabel(); return renderShots(products); })
+  .then((s) => Object.assign(shots, s))
+  .catch((err) => console.warn('Packshots unavailable, using illustrations', err))
+  .then(() => { applyShots(); cart.render(); });
 
 function preloader() {
   return new Promise((resolve) => {
@@ -341,7 +357,7 @@ function preloader() {
         v: 100, duration: reduced ? 0.6 : 2.4, ease: 'power2.inOut',
         onUpdate: () => (count.textContent = String(Math.round(c.v)).padStart(3, '0')),
       }, 0.2);
-    Promise.all([fontsReady, new Promise((r) => tl.eventCallback('onComplete', r))]).then(resolve);
+    Promise.all([fontsReady, shotsReady, new Promise((r) => tl.eventCallback('onComplete', r))]).then(resolve);
   });
 }
 
@@ -387,8 +403,8 @@ function buildScroll() {
     },
   });
   gsap.utils.toArray('.card').forEach((card) => {
-    gsap.fromTo(card.querySelector('.card__bottle'), { x: 0, xPercent: -30 }, {
-      xPercent: -70, ease: 'none',
+    gsap.fromTo(card.querySelector('.card__shot'), { xPercent: 6 }, {
+      xPercent: -6, ease: 'none',
       scrollTrigger: { trigger: card, containerAnimation: hTween, start: 'left right', end: 'right left', scrub: true },
     });
     if (finePointer) {
@@ -409,7 +425,46 @@ function buildScroll() {
     scrollTrigger: { trigger: '.collection', start: 'top 65%' },
   });
 
-  // 2. Pinned notes: phase transitions + liquid colour + rolling counter
+  // 2. Alchemy: flowers bloom, petals swirl into the flacon, it fills and is sealed
+  const steps = gsap.utils.toArray('.astep');
+  gsap.set(steps.slice(1), { autoAlpha: 0 });
+  const altl = gsap.timeline({
+    scrollTrigger: { trigger: '.alchemy', start: 'top top', end: () => '+=' + window.innerHeight * 3.6, pin: true, scrub: 1 },
+  });
+  altl.fromTo(scene.alch, { p: 0.0001 }, { p: 1, duration: 1, ease: 'none', immediateRender: false }, 0);
+  [0.26, 0.52, 0.84].forEach((at, i) => {
+    altl.to(steps[i], { y: -30, autoAlpha: 0, duration: 0.035 }, at)
+      .fromTo(steps[i + 1], { y: 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.05 }, at + 0.035);
+  });
+  ScrollTrigger.create({ trigger: '.alchemy', start: 'top bottom', end: 'top top', onUpdate: (st) => (scene.alch.enter = st.progress) });
+  gsap.from('.alchemy__title, .alchemy .eyebrow', { y: 40, opacity: 0, stagger: 0.1, duration: 1.2, ease: 'silk', scrollTrigger: { trigger: '.alchemy', start: 'top 60%' } });
+
+  const conc = document.querySelector('[data-conc]');
+  const meter = document.querySelector('.alchemy__meter em');
+  const labels = gsap.utils.toArray('.flabel');
+  let labelsOn = false;
+  gsap.ticker.add(() => {
+    const active = scene.alch.enter > 0 && scene.alch.p < 1;
+    if (!active) {
+      if (labelsOn) { labels.forEach((l) => (l.style.opacity = 0)); labelsOn = false; }
+      return;
+    }
+    labelsOn = true;
+    const lv = Math.min(1, scene.level() / FULL);
+    conc.textContent = Math.round(lv * 24);
+    meter.style.transform = `scaleX(${lv})`;
+    labels.forEach((l, i) => {
+      const pt = scene.flowerScreen(i);
+      if (!pt) { l.style.opacity = 0; return; }
+      const left = i % 2 === 0;
+      const dx = left ? -(l.offsetWidth + 40) : 40;
+      const lx = gsap.utils.clamp(12, window.innerWidth - l.offsetWidth - 12, pt.x + dx);
+      l.style.transform = `translate(${lx}px, ${pt.y - 20}px)`;
+      l.style.opacity = Math.min(1, pt.s / 1.25) ** 3;
+    });
+  });
+
+  // 3. Pinned notes: phase transitions + liquid colour + rolling counter
   const phases = gsap.utils.toArray('.notes__phase');
   const notesSection = document.querySelector('.notes');
   gsap.set(phases.slice(1), { autoAlpha: 0 });
@@ -417,6 +472,7 @@ function buildScroll() {
   scene.liquidMat.color.setRGB(first.r, first.g, first.b);
   scene.liquidMat.emissive.setRGB(first.r, first.g, first.b);
   notesSection.style.setProperty('--glow', phases[0].dataset.color);
+  scene.setAmber(phases[0].dataset.color);
 
   const ntl = gsap.timeline({
     defaults: { ease: 'power2.inOut' },
@@ -448,13 +504,15 @@ function buildScroll() {
   // 3. Flacon choreography across sections (x / y are fractions of the half viewport)
   const P = (o) => ({ x: 0, y: 0, rotY: 0, rotZ: 0, scale: 1, opacity: 1, ...o });
   const mobilePoses = () => ({
-    hero: P({ y: 0.4, scale: 0.78, rotZ: 0.06 }),
+    hero: P({ y: 0.47, scale: 0.72, rotZ: 0.06 }),
     manifesto: P({ y: 0, rotY: Math.PI * 2, rotZ: -0.1, scale: 0.8, opacity: 0.18 }),
     out: P({ y: 1.4, rotY: Math.PI * 2.4, scale: 0.6, opacity: 0 }),
-    notesIn: P({ y: -1.4, rotY: -Math.PI * 0.6, scale: 0.6, opacity: 0 }),
-    notes: P({ y: -0.1, scale: 0.7 }),
-    notesEnd: P({ y: -0.1, scale: 0.7, rotY: Math.PI * 2 }),
-    notesOut: P({ y: 1.4, rotY: Math.PI * 2.5, scale: 0.6, opacity: 0 }),
+    alchIn: P({ y: -1.4, rotY: -Math.PI * 0.6, scale: 0.6, opacity: 0 }),
+    alch: P({ y: 0.02, scale: 0.62 }),
+    alchEnd: P({ y: 0.02, scale: 0.62, rotY: Math.PI * 2 }),
+    notes: P({ y: -0.1, scale: 0.7, rotY: Math.PI * 2 }),
+    notesEnd: P({ y: -0.1, scale: 0.7, rotY: Math.PI * 4 }),
+    notesOut: P({ y: 1.4, rotY: Math.PI * 4.5, scale: 0.6, opacity: 0 }),
     ctaIn: P({ y: -1.4, rotY: -Math.PI, scale: 0.6, opacity: 0 }),
     cta: P({ y: 0.42, scale: 0.75, rotZ: 0.08 }),
     ctaOut: P({ y: 1.4, scale: 0.6, opacity: 0, rotY: Math.PI }),
@@ -463,10 +521,12 @@ function buildScroll() {
     hero: P({ x: 0.42, y: -0.02, rotZ: 0.1, scale: 0.95 }),
     manifesto: P({ x: -0.56, rotY: Math.PI * 2, rotZ: -0.16, scale: 0.82 }),
     out: P({ x: -0.56, y: 1.35, rotY: Math.PI * 2.4, rotZ: -0.3, scale: 0.6, opacity: 0 }),
-    notesIn: P({ y: -1.35, rotY: -Math.PI * 0.6, scale: 0.7, opacity: 0 }),
-    notes: P({ y: -0.02, scale: 0.95 }),
-    notesEnd: P({ y: -0.02, scale: 0.95, rotY: Math.PI * 2 }),
-    notesOut: P({ y: 1.35, rotY: Math.PI * 2.5, scale: 0.7, opacity: 0 }),
+    alchIn: P({ y: -1.35, rotY: -Math.PI * 0.6, scale: 0.7, opacity: 0 }),
+    alch: P({ y: -0.06, scale: 0.8 }),
+    alchEnd: P({ y: -0.06, scale: 0.8, rotY: Math.PI * 2 }),
+    notes: P({ y: -0.02, scale: 0.95, rotY: Math.PI * 2 }),
+    notesEnd: P({ y: -0.02, scale: 0.95, rotY: Math.PI * 4 }),
+    notesOut: P({ y: 1.35, rotY: Math.PI * 4.5, scale: 0.7, opacity: 0 }),
     ctaIn: P({ x: 0.45, y: -1.35, rotY: -Math.PI, rotZ: 0.2, scale: 0.6, opacity: 0 }),
     cta: P({ x: 0.45, y: 0, rotZ: 0.12, scale: 0.85 }),
     ctaOut: P({ x: 0.45, y: 1.35, rotY: Math.PI, scale: 0.6, opacity: 0 }),
@@ -477,7 +537,9 @@ function buildScroll() {
   const segments = [
     seg('hero', 'manifesto', { trigger: '.hero', start: 'top top', endTrigger: '.manifesto', end: 'center center' }),
     seg('manifesto', 'out', { trigger: '.collection', start: 'top bottom', end: 'top top' }),
-    seg('notesIn', 'notes', { trigger: '.notes', start: 'top bottom', end: 'top top' }),
+    seg('alchIn', 'alch', { trigger: '.alchemy', start: 'top bottom', end: 'top top' }),
+    seg('alch', 'alchEnd', { st: altl.scrollTrigger }),
+    seg('alchEnd', 'notes', { trigger: '.notes', start: 'top bottom', end: 'top top' }),
     seg('notes', 'notesEnd', { st: ntl.scrollTrigger }),
     seg('notesEnd', 'notesOut', { trigger: '.craft', start: 'top bottom', end: 'top 20%' }),
     seg('ctaIn', 'cta', { trigger: '.cta', start: 'top bottom', end: 'center center' }),

@@ -5,7 +5,7 @@ const KEY = 'aurele-bag';
 export const fmt = (n) => new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
 export const priceOf = (p, size) => (size === 50 ? Math.round(p.price * 0.65) : p.price);
 
-export function createCart({ products, lenis, toast }) {
+export function createCart({ products, lenis, toast, thumb }) {
   const byId = Object.fromEntries(products.map((p) => [p.id, p]));
   const root = document.querySelector('.bag');
   const panel = root.querySelector('.bag__panel');
@@ -41,7 +41,7 @@ export function createCart({ products, lenis, toast }) {
         const p = byId[i.id];
         return `
         <li class="bag__item" style="--c1:${p.c1};--c2:${p.c2}">
-          <div class="bag__thumb">${bottleSVG(p)}</div>
+          <div class="bag__thumb">${thumb ? thumb(p) : bottleSVG(p)}</div>
           <div class="bag__meta">
             <strong>${p.name}</strong>
             <span>${p.family} · ${i.size} ml</span>
@@ -124,5 +124,5 @@ export function createCart({ products, lenis, toast }) {
   });
 
   render();
-  return { add, open, close };
+  return { add, open, close, render };
 }
